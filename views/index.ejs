@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <title>API Country Info</title>
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome to the Country Info API</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Introduction</h2>
+            <p>This API provides detailed information about countries based on their code (country code).</p>
+            <p>You can get data such as the country name, flag, phone dialing code, spoken languages, and more.</p>
+        </section>
+        <section>
+            <h2>How to Use the API</h2>
+            <p>To get information about a country, make a GET request to the following URL:</p>
+            <pre><code>http://<%= domain %>/country/:code</code></pre>
+            <p>Replace <code>:code</code> with the country code (e.g., <code>US</code> for United States).</p>
+            <p>Information will be returned in JSON format.</p>
+        </section>
+        <section>
+            <h2>Rate Limitation</h2>
+            <p>The API has a rate limit of <%= rateLimit.max %> requests every <%= rateLimit.windowMs / 1000 %> seconds per IP address. If you exceed this limit, you will receive a message saying "Too many requests, please try again later."</p>
+        </section>
+        <section>
+            <h2>Test the API</h2>
+            <form id="testForm">
+                <label for="countryCode">Country Code:</label>
+                <input type="text" id="countryCode" name="countryCode" placeholder="US">
+                <button type="submit">Test</button>
+            </form>
+            <pre id="result"></pre>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Aprilox. All rights reserved.</p>
+    </footer>
+    <script>
+        document.getElementById('testForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const countryCode = document.getElementById('countryCode').value.trim().toUpperCase();
+
+            if (!countryCode) {
+                document.getElementById('result').textContent = 'Please enter a country code.';
+                return;
+            }
+
+            fetch(`/country/${countryCode}`)
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('result').textContent = `Error: ${error.message}`;
+                });
+        });
+    </script>
+</body>
+</html>
